@@ -8,17 +8,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Start bot"""
 
     global COUNT
-    COUNT = 1
     
-    reply_keyboard = [
-        ["/start"],
-        ["/queue", "/queue_mix"],
-        ["/help"]
+    COUNT = +1
     
     reply_keyboard = [
         ["/start"],
         ["/queue", "/queue_mix", "/queue_v2"],
         ["/tempo"]
+    ]
+    
     """Send a deep-linked URL when the command /start is issued."""
     bot = context.bot
     user = update.effective_user    
@@ -29,14 +27,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
     
     text = ("👺" "{} items found".format(len(data)))
-    
-    await update.message.reply_text(
-        text,
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard,
-            one_time_keyboard=True
-        )
-    )
 
     await update.message.reply_html(
         rf"ִֶָ𓂃 ࣪˖ ִֶָ🐇་༘࿐ {user.mention_html()}! {text}.",
@@ -71,8 +61,6 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global COUNT
     
     reply_keyboard = [
-        ["/queue", "/queue_mix"],
-        ["/sub", "/add"]
         ["/sub", "/add"],
         ["/queue", "/queue_v2"],
         ["/queue_mix"]
@@ -91,8 +79,6 @@ async def sub(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global COUNT
 
     reply_keyboard = [
-        ["/queue", "/queue_mix"],
-        ["/sub", "/add"]
         ["/sub", "/add"],
         ["/queue", "/queue_v2"],
         ["/queue_mix"]
@@ -119,19 +105,6 @@ async def queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /next is issued."""
 
     global COUNT
-         
-    msg_id = []
-
-    for k, v in data.items():
-        msg_id.append(k)
-
-    for i in range(COUNT):
-        url = "https://t.me/crateofnotsodasbutmusic/{}".format(
-            random.choice(msg_id))
-        
-        reply_keyboard = [
-            ["/sub", "/add"],
-            ["/queue", "/queue_mix"],
 
     # Get all available message IDs, excluding known bad IDs
     msg_id = [k for k in data.keys()]
@@ -193,13 +166,6 @@ async def queue_v2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     one_time_keyboard=True
                 )
             )
-        except AttributeError as e:
-            continue
-        
-async def queue_mix(
-        update: Update,
-        context: ContextTypes.DEFAULT_TYPE
-) -> None:
             print(url)
         except (AttributeError, BadRequest) as e:
             await update.message.reply_text(
@@ -218,15 +184,6 @@ async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if v.get("duration") > 600 and v.get("duration") < 18000:
             msg_id.append(k)
 
-    for i in range(COUNT):
-        url = "https://t.me/crateofnotsodasbutmusic/{}".format(
-            random.choice(msg_id))
-        
-        reply_keyboard = [
-            ["/sub", "/add"],
-            ["/queue", "/queue_mix"],
-            ["/start"]
-        ]
     # Shuffle the list of message IDs
     random.shuffle(msg_id)
     reply_keyboard = [
@@ -248,24 +205,6 @@ async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=ReplyKeyboardMarkup(
                     reply_keyboard,
-                    one_time_keyboard=True
-                )
-            )
-        except BadRequest as e:
-            continue
-        
-async def run_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    command = "python3 get_history.py"
-    result = os.popen(command).read()  # Run the command and get the output
-    await update.message.reply_text(f"{result}\n done.")
-    
-async def help_command(
-        update: Update,
-        context: ContextTypes.DEFAULT_TYPE
-) -> None:
-    """Send a message when the command /help is issued."""
-    await update.message.reply_text("/next Add to playlist.")
-
                     one_time_keyboard=True,
                     input_field_placeholder="▀▄▀▄▀▄"
                 )

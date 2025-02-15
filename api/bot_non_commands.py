@@ -8,7 +8,6 @@ async def search(
 ) -> list[tuple]:
     """Search the user's message.""" 
 
-    global filename, msg_id, link_list, page_number, page_size, start_index, end_index, enum_link_list
     global filename, msg_id, msg_id_v2, link_list, page_number, page_size, start_index, end_index, enum_link_list
 
     page_size = 10
@@ -20,20 +19,7 @@ async def search(
     start_index = (page_number - 1) * page_size
     end_index = start_index + page_size
 
-    link_list, msg_id, filename, title, performer = [], [], [], [], []
-
-    try:
-        for k, v in data.items():
-            if (re.search(
-                    update.message.text,
-                    v.get('filename'),
-                    re.IGNORECASE)
-            ):
-                msg_id.append(k)
-                filename.append(v.get('filename'))
-                title.append(v.get('title'))
-                performer.append(v.get('performer'))
-                
+    link_list, msg_id, msg_id_v2, filename, title, performer = [], [], [], [], [], []
 
     try:
         for (k1, v1), (k2, v2) in zip(data.items(), data_v2.items()):
@@ -75,15 +61,6 @@ async def search(
     COUNT = 0
     link = re.search(r"(t\.me\/[a-zA-Z0-9_]{5,32})", update.message.text)
 
-    for i in range(len(filename)):
-        link_str = "[{}]({})\n".format(
-            filename[i],
-            dcr8_url+"{}".format(msg_id[i])
-        )
-        link_list.append(link_str)
-
-    enum_link_list = [
-        "{}. {}".format(i, link_str) for i,
     for id1, id2 in range(len(filename)):
         link_str = "[{}]({})".format(
             filename[id1],
@@ -126,7 +103,6 @@ async def search(
                 "Not found.\n\n{}".format(e)
             )        
         
-    return msg_id, performer, title, filename, enum_link_list
     return msg_id, msg_id_v2,  performer, title, filename, enum_link_list
 
 async def search_buttons(
@@ -134,7 +110,6 @@ async def search_buttons(
         context: ContextTypes.DEFAULT_TYPE
 ) -> None:
 
-    global filename, msg_id, link_list, page_number, page_size, start_index, end_index
     global filename, msg_id, msg_id_v2, link_list, page_number, page_size, start_index, end_index
     
     query = update.callback_query
