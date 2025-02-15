@@ -11,10 +11,18 @@ api_id = 314504
 api_hash = "8c64c308e6f0186d495ae1e92a1c228d"
 
 decr8 = -1001280481543
+<<<<<<< HEAD
+=======
+decr8_v2 = -1001969042072
+>>>>>>> 536f6da (transfer?)
 decr8loader = 1575933473
 me = 487795386
 p = re.compile("[a-z]+", re.IGNORECASE)
 dcr8_url = "https://t.me/crateofnotsodasbutmusic/"
+<<<<<<< HEAD
+=======
+dcr8_v2_url = "https://t.me/thecrate/"
+>>>>>>> 536f6da (transfer?)
 
 # deep-linking parameters.
 DECR8 = 'decr8'
@@ -28,7 +36,11 @@ STAGE1, STAGE2, STAGE3, STAGE4 = range(4)
 app = Client("decr8_g-host", api_id=api_id, api_hash=api_hash)
 
 application = Application.builder().token(
+<<<<<<< HEAD
     "1266125805:AAFnUPiqc0LiHPWJNlOp2XhfSGsqtu_cEbA"
+=======
+    "6019764680:AAHHW7sDL6I441HW3ineaJ3PM73tXwUlfLU"
+>>>>>>> 536f6da (transfer?)
 ).build()
 
 def process_data(file_path, logger):
@@ -40,3 +52,7 @@ def process_data(file_path, logger):
 
 # Call the function and assign the result to a variable
 data = process_data("/home/decr8/decr8/res/decr8_data.json", logger)
+<<<<<<< HEAD
+=======
+data_v2 = process_data("/home/decr8/decr8/res/decr8_data_v2.json", logger)
+>>>>>>> 536f6da (transfer?)

@@ -1,42 +1,25 @@
 from api.imports import *
 from api.variables import *
 from api.bot_error import *
-
+from telegram import InputMediaAudio
 COUNT = 0
-<<<<<<< HEAD
 
-=======
-DELAY = 15
->>>>>>> 536f6da (transfer?)
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Start bot"""
 
     global COUNT
     
-<<<<<<< HEAD
-    COUNT = 1
-    
-    reply_keyboard = [
-        ["/start"],
-        ["/queue", "/queue_mix"],
-        ["/help"]
-=======
     COUNT = +1
     
     reply_keyboard = [
         ["/start"],
         ["/queue", "/queue_mix", "/queue_v2"],
         ["/tempo"]
->>>>>>> 536f6da (transfer?)
     ]
     
     """Send a deep-linked URL when the command /start is issued."""
     bot = context.bot
-<<<<<<< HEAD
-    
-=======
     user = update.effective_user    
->>>>>>> 536f6da (transfer?)
     url = helpers.create_deep_linked_url(
         bot.username,
         DECR8,
@@ -44,24 +27,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
     
     text = ("👺" "{} items found".format(len(data)))
-<<<<<<< HEAD
-    
-    await update.message.reply_text(
-        text,
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard,
-            one_time_keyboard=True
-        )
-    )
-    
-=======
 
     await update.message.reply_html(
-        rf"ִֶָ𓂃 ࣪˖ ִֶָ🐇་༘࿐ {user.mention_html()}! {text}.",
+        rf"Welcome! {user.mention_html()}! {text}.",
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard,
             one_time_keyboard=True,
-            input_field_placeholder="ﮩـﮩﮩ٨ـ❤️ﮩ٨ـﮩﮩ٨ـ"
+            input_field_placeholder="ﮩـﮩﮩ٨ـ❤️ ﮩ٨ـﮩﮩ٨ـ"
         ),
     )
     
@@ -82,7 +54,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
     link = re.search(r"(t\.me\/[a-zA-Z0-9_]{5,32})", update.message.text)
 
->>>>>>> 536f6da (transfer?)
     return STAGE1
 
 async def add(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -90,14 +61,9 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global COUNT
     
     reply_keyboard = [
-<<<<<<< HEAD
-        ["/queue", "/queue_mix"],
-        ["/sub", "/add"]
-=======
         ["/sub", "/add"],
         ["/queue", "/queue_v2"],
         ["/queue_mix"]
->>>>>>> 536f6da (transfer?)
     ]
 
     COUNT += 1
@@ -113,14 +79,9 @@ async def sub(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global COUNT
 
     reply_keyboard = [
-<<<<<<< HEAD
-        ["/queue", "/queue_mix"],
-        ["/sub", "/add"]
-=======
         ["/sub", "/add"],
         ["/queue", "/queue_v2"],
         ["/queue_mix"]
->>>>>>> 536f6da (transfer?)
     ]
     help_keyboard = [
         ["/add"]
@@ -144,21 +105,6 @@ async def queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /next is issued."""
 
     global COUNT
-<<<<<<< HEAD
-         
-    msg_id = []
-
-    for k, v in data.items():
-        msg_id.append(k)
-
-    for i in range(COUNT):
-        url = "https://t.me/crateofnotsodasbutmusic/{}".format(
-            random.choice(msg_id))
-        
-        reply_keyboard = [
-            ["/sub", "/add"],
-            ["/queue", "/queue_mix"],
-=======
 
     # Get all available message IDs, excluding known bad IDs
     msg_id = [k for k in data.keys()]
@@ -181,15 +127,11 @@ async def queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=ReplyKeyboardMarkup(
                     reply_keyboard,
-                    one_time_keyboard=True,
-                    input_field_placeholder="▄︻デ══━一💥"
+                    one_time_keyboard=True
                 )
             )
-        except (AttributeError, BadRequest) as e:
-            await update.message.reply_text(
-                "[{}]({})".format("  🃜🃚🃖🃁🂭🂺  ", url),
-                parse_mode=ParseMode.MARKDOWN,
-            )
+        except AttributeError as e:
+            continue
 
 async def queue_v2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /next is issued."""
@@ -209,7 +151,6 @@ async def queue_v2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         reply_keyboard = [
             ["/sub", "/add"],
             ["/queue", "/queue_mix", "/queue_v2"],
->>>>>>> 536f6da (transfer?)
             ["/start"]
         ]
         try:
@@ -221,24 +162,14 @@ async def queue_v2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     one_time_keyboard=True
                 )
             )
-<<<<<<< HEAD
-        except AttributeError as e:
-            continue
-        
-async def queue_mix(
-        update: Update,
-        context: ContextTypes.DEFAULT_TYPE
-) -> None:
-=======
             print(url)
         except (AttributeError, BadRequest) as e:
             await update.message.reply_text(
                 "[{}]({})".format("  🃜🃚🃖🃁🂭🂺  ", url),
-                parse_mode=ParseMode.MARKDOWN,
+                parse_mode=ParseMode.MARKDOWN
             )
 
 async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
->>>>>>> 536f6da (transfer?)
     """Send a message when the command /next is issued."""
     
     global COUNT
@@ -249,19 +180,13 @@ async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if v.get("duration") > 600 and v.get("duration") < 18000:
             msg_id.append(k)
 
-<<<<<<< HEAD
-    for i in range(COUNT):
-        url = "https://t.me/crateofnotsodasbutmusic/{}".format(
-            random.choice(msg_id))
-        
-        reply_keyboard = [
-            ["/sub", "/add"],
-            ["/queue", "/queue_mix"],
-            ["/start"]
-        ]
-=======
     # Shuffle the list of message IDs
     random.shuffle(msg_id)
+    """
+    # Iterate over the shuffled list
+    for i in range(min(COUNT, len(msg_id))):
+        url = f"https://t.me/crateofnotsodasbutmusic/{msg_id[i]}"
+    """
     reply_keyboard = [
         ["/sub", "/add"],
         ["/queue", "/queue_mix", "/queue_v2"],
@@ -275,57 +200,65 @@ async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
     # Iterate over the URLs and send an audio message for each one
     for url in urls:
->>>>>>> 536f6da (transfer?)
         try:
             await update.message.reply_audio(
                 "{}".format(url),
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=ReplyKeyboardMarkup(
                     reply_keyboard,
-<<<<<<< HEAD
                     one_time_keyboard=True
                 )
             )
         except BadRequest as e:
             continue
-        
-async def run_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    command = "python3 get_history.py"
-    result = os.popen(command).read()  # Run the command and get the output
-    await update.message.reply_text(f"{result}\n done.")
-    
-async def help_command(
-        update: Update,
-        context: ContextTypes.DEFAULT_TYPE
-) -> None:
-    """Send a message when the command /help is issued."""
-    await update.message.reply_text("/next Add to playlist.")
-
-=======
-                    one_time_keyboard=True,
-                    input_field_placeholder="▀▄▀▄▀▄"
-                )
-            )
-        except (AttributeError, BadRequest) as e:
-            continue
-        
+            
+ 
 async def slow(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    global DELAY
+
+    global COUNT
+
+    msg_id = list(data.keys())
+
+    # Define the reply keyboard layout
     reply_keyboard = [
         ["/slow", "/fast"],
-        ["/start"]
+        ["/queue", "/queue_v2"],
+        ["/queue_mix"]
     ]
-    if DELAY < 5:
-        await update.message.reply_text(
-            "delay cant be < {}. /fast instead".format(DELAY),
-            reply_markup=ReplyKeyboardMarkup(reply_keyboard),
-            parse_mode=ParseMode.MARKDOWN
+
+    # Generate ID and separate value from command
+    key = str(uuid4())
+    # We don't use context.args here, because the value may contain whitespaces
+    value = update.message.text.partition(' ')[2]
+
+    # Store value
+    context.user_data[key] = value
+    # Send the key to the user
+    
+    await update.message.reply_text(
+        key,
+        parse_mode=ParseMode.MARKDOWN,
+        reply_markup=ReplyKeyboardMarkup(
+            reply_keyboard,
+            one_time_keyboard=True
         )
-    else:
-        DELAY -= 5
+    )
         
+async def fast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+        # Define the reply keyboard layout
+        reply_keyboard = [
+            ["/slow", "/fast"],
+            ["/queue", "/queue_v2"],
+            ["/queue_mix"]
+        ]
+        # Separate ID from command
+        key = context.args[0]
+         
+        # Load value and send it to the user
+        value = context.user_data.get(key, 'Not found')
         await update.message.reply_text(
-            "{}({})".format(DELAY, "-5"),
+            value,
             parse_mode=ParseMode.MARKDOWN,
             reply_markup=ReplyKeyboardMarkup(
                 reply_keyboard,
@@ -333,56 +266,17 @@ async def slow(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             )
         )
         
-async def fast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    
-    global DELAY
-    # Define the reply keyboard layout
-    reply_keyboard = [
-        ["/slow", "/fast"],
-        ["/start"]
-    ]
-    DELAY +=5
-    await update.message.reply_text(
-        "{}({})".format(DELAY, "+5"),
-        parse_mode=ParseMode.MARKDOWN,
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard,
-            one_time_keyboard=True
-        )
-    )
-    
 async def tempo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued."""
-    global DELAY
+    
     reply_keyboard = [
         ["/slow", "/fast"],
         ["/start"]
     ]
-    # Get all available message IDs
-    msg_id = [k for k in data.keys()]
-    while True:
-        random.shuffle(msg_id)
-        # Iterate over the shuffled list
-        for i in msg_id:
-            url = f"https://t.me/crateofnotsodasbutmusic/{i}"
-            try:
-                await update.message.reply_audio(
-                    "{}".format(url),
-                    parse_mode=ParseMode.MARKDOWN,
-                    reply_markup=ReplyKeyboardMarkup(
-                        reply_keyboard,
-                        one_time_keyboard=True,
-                        input_field_placeholder="▄︻デ══━一💥"
-                    )
-                )
-                if update.message.text == "/slow":
-                    time.sleep(DELAY)
-                elif update.message.text == "/stop":
-                    break
-            except (AttributeError, BadRequest) as e:
-                await update.message.reply_text(
-                    "[{}]({})".format("  🃜🃚🃖🃁🂭🂺  ", url),
-                    parse_mode=ParseMode.MARKDOWN,
-                )
-                time.sleep(DELAY)
->>>>>>> 536f6da (transfer?)
+
+    await update.message.reply_text(
+        "EXPERIMENTAL!!".format(COUNT),
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard),
+        parse_mode=ParseMode.MARKDOWN
+    )
+
