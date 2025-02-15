@@ -14,7 +14,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         ["/start"],
         ["/queue", "/queue_mix"],
         ["/help"]
-    COUNT = +1
     
     reply_keyboard = [
         ["/start"],

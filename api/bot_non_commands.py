@@ -34,7 +34,6 @@ async def search(
                 title.append(v.get('title'))
                 performer.append(v.get('performer'))
                 
-    link_list, msg_id, msg_id_v2, filename, title, performer = [], [], [], [], [], []
 
     try:
         for (k1, v1), (k2, v2) in zip(data.items(), data_v2.items()):

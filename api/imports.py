@@ -42,11 +42,8 @@ from telegram.error import (
 
 from uuid import uuid4
 from html import escape
-<<<<<<< HEAD
 
 import random, os, re, json, traceback, logging
-=======
 from io import BytesIO
 
 import random, os, re, json, traceback, logging, librosa, time
->>>>>>> 536f6da (transfer?)
