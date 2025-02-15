@@ -3,40 +3,26 @@ from api.variables import *
 from api.bot_error import *
 
 COUNT = 0
-<<<<<<< HEAD
-
-=======
 DELAY = 15
->>>>>>> 536f6da (transfer?)
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Start bot"""
 
     global COUNT
-    
-<<<<<<< HEAD
     COUNT = 1
     
     reply_keyboard = [
         ["/start"],
         ["/queue", "/queue_mix"],
         ["/help"]
-=======
     COUNT = +1
     
     reply_keyboard = [
         ["/start"],
         ["/queue", "/queue_mix", "/queue_v2"],
         ["/tempo"]
->>>>>>> 536f6da (transfer?)
-    ]
-    
     """Send a deep-linked URL when the command /start is issued."""
     bot = context.bot
-<<<<<<< HEAD
-    
-=======
     user = update.effective_user    
->>>>>>> 536f6da (transfer?)
     url = helpers.create_deep_linked_url(
         bot.username,
         DECR8,
@@ -44,7 +30,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
     
     text = ("👺" "{} items found".format(len(data)))
-<<<<<<< HEAD
     
     await update.message.reply_text(
         text,
@@ -53,8 +38,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             one_time_keyboard=True
         )
     )
-    
-=======
 
     await update.message.reply_html(
         rf"ִֶָ𓂃 ࣪˖ ִֶָ🐇་༘࿐ {user.mention_html()}! {text}.",
@@ -82,7 +65,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
     link = re.search(r"(t\.me\/[a-zA-Z0-9_]{5,32})", update.message.text)
 
->>>>>>> 536f6da (transfer?)
     return STAGE1
 
 async def add(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -90,14 +72,11 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global COUNT
     
     reply_keyboard = [
-<<<<<<< HEAD
         ["/queue", "/queue_mix"],
         ["/sub", "/add"]
-=======
         ["/sub", "/add"],
         ["/queue", "/queue_v2"],
         ["/queue_mix"]
->>>>>>> 536f6da (transfer?)
     ]
 
     COUNT += 1
@@ -113,14 +92,11 @@ async def sub(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global COUNT
 
     reply_keyboard = [
-<<<<<<< HEAD
         ["/queue", "/queue_mix"],
         ["/sub", "/add"]
-=======
         ["/sub", "/add"],
         ["/queue", "/queue_v2"],
         ["/queue_mix"]
->>>>>>> 536f6da (transfer?)
     ]
     help_keyboard = [
         ["/add"]
@@ -144,7 +120,6 @@ async def queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /next is issued."""
 
     global COUNT
-<<<<<<< HEAD
          
     msg_id = []
 
@@ -158,7 +133,6 @@ async def queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         reply_keyboard = [
             ["/sub", "/add"],
             ["/queue", "/queue_mix"],
-=======
 
     # Get all available message IDs, excluding known bad IDs
     msg_id = [k for k in data.keys()]
@@ -209,7 +183,6 @@ async def queue_v2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         reply_keyboard = [
             ["/sub", "/add"],
             ["/queue", "/queue_mix", "/queue_v2"],
->>>>>>> 536f6da (transfer?)
             ["/start"]
         ]
         try:
@@ -221,7 +194,6 @@ async def queue_v2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     one_time_keyboard=True
                 )
             )
-<<<<<<< HEAD
         except AttributeError as e:
             continue
         
@@ -229,7 +201,6 @@ async def queue_mix(
         update: Update,
         context: ContextTypes.DEFAULT_TYPE
 ) -> None:
-=======
             print(url)
         except (AttributeError, BadRequest) as e:
             await update.message.reply_text(
@@ -238,7 +209,6 @@ async def queue_mix(
             )
 
 async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
->>>>>>> 536f6da (transfer?)
     """Send a message when the command /next is issued."""
     
     global COUNT
@@ -249,7 +219,6 @@ async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if v.get("duration") > 600 and v.get("duration") < 18000:
             msg_id.append(k)
 
-<<<<<<< HEAD
     for i in range(COUNT):
         url = "https://t.me/crateofnotsodasbutmusic/{}".format(
             random.choice(msg_id))
@@ -259,7 +228,6 @@ async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             ["/queue", "/queue_mix"],
             ["/start"]
         ]
-=======
     # Shuffle the list of message IDs
     random.shuffle(msg_id)
     reply_keyboard = [
@@ -275,14 +243,12 @@ async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
     # Iterate over the URLs and send an audio message for each one
     for url in urls:
->>>>>>> 536f6da (transfer?)
         try:
             await update.message.reply_audio(
                 "{}".format(url),
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=ReplyKeyboardMarkup(
                     reply_keyboard,
-<<<<<<< HEAD
                     one_time_keyboard=True
                 )
             )
@@ -301,7 +267,6 @@ async def help_command(
     """Send a message when the command /help is issued."""
     await update.message.reply_text("/next Add to playlist.")
 
-=======
                     one_time_keyboard=True,
                     input_field_placeholder="▀▄▀▄▀▄"
                 )
@@ -385,4 +350,3 @@ async def tempo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     parse_mode=ParseMode.MARKDOWN,
                 )
                 time.sleep(DELAY)
->>>>>>> 536f6da (transfer?)

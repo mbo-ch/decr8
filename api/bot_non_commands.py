@@ -8,11 +8,8 @@ async def search(
 ) -> list[tuple]:
     """Search the user's message.""" 
 
-<<<<<<< HEAD
     global filename, msg_id, link_list, page_number, page_size, start_index, end_index, enum_link_list
-=======
     global filename, msg_id, msg_id_v2, link_list, page_number, page_size, start_index, end_index, enum_link_list
->>>>>>> 536f6da (transfer?)
 
     page_size = 10
 
@@ -23,7 +20,6 @@ async def search(
     start_index = (page_number - 1) * page_size
     end_index = start_index + page_size
 
-<<<<<<< HEAD
     link_list, msg_id, filename, title, performer = [], [], [], [], []
 
     try:
@@ -38,7 +34,6 @@ async def search(
                 title.append(v.get('title'))
                 performer.append(v.get('performer'))
                 
-=======
     link_list, msg_id, msg_id_v2, filename, title, performer = [], [], [], [], [], []
 
     try:
@@ -59,7 +54,6 @@ async def search(
                 title.append(v2.get('title'))
                 performer.append(v2.get('performer'))
 
->>>>>>> 536f6da (transfer?)
     except AttributeError as e:
         e
         
@@ -82,7 +76,6 @@ async def search(
     COUNT = 0
     link = re.search(r"(t\.me\/[a-zA-Z0-9_]{5,32})", update.message.text)
 
-<<<<<<< HEAD
     for i in range(len(filename)):
         link_str = "[{}]({})\n".format(
             filename[i],
@@ -92,7 +85,6 @@ async def search(
 
     enum_link_list = [
         "{}. {}".format(i, link_str) for i,
-=======
     for id1, id2 in range(len(filename)):
         link_str = "[{}]({})".format(
             filename[id1],
@@ -107,7 +99,6 @@ async def search(
         
     enum_link_list = [
         "{}. {}".format(i, (link_str, link_str_v2)) for i,
->>>>>>> 536f6da (transfer?)
         link_str in enumerate(link_list, start=1)
     ]
     # Slice the list to get the items for the current page
@@ -136,22 +127,16 @@ async def search(
                 "Not found.\n\n{}".format(e)
             )        
         
-<<<<<<< HEAD
     return msg_id, performer, title, filename, enum_link_list
-=======
     return msg_id, msg_id_v2,  performer, title, filename, enum_link_list
->>>>>>> 536f6da (transfer?)
 
 async def search_buttons(
         update: Update,
         context: ContextTypes.DEFAULT_TYPE
 ) -> None:
 
-<<<<<<< HEAD
     global filename, msg_id, link_list, page_number, page_size, start_index, end_index
-=======
     global filename, msg_id, msg_id_v2, link_list, page_number, page_size, start_index, end_index
->>>>>>> 536f6da (transfer?)
     
     query = update.callback_query
     

@@ -49,14 +49,12 @@ conv_handler = ConversationHandler(
 # on different commands - answer in Telegram
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CommandHandler("queue", queue))
-<<<<<<< HEAD
 application.add_handler(CommandHandler("queue_mix", queue_mix))
 application.add_handler(CommandHandler("add", add))
 application.add_handler(CommandHandler("sub", sub))
 application.add_handler(CommandHandler("update", run_update))
 
 application.add_handler(CommandHandler("help", help_command))
-=======
 application.add_handler(CommandHandler("queue_v2", queue_v2))
 application.add_handler(CommandHandler("queue_mix", queue_mix))
 application.add_handler(CommandHandler("add", add))
@@ -64,7 +62,6 @@ application.add_handler(CommandHandler("sub", sub))
 application.add_handler(CommandHandler("slow", slow))
 application.add_handler(CommandHandler("fast", fast))
 application.add_handler(CommandHandler("tempo", tempo))
->>>>>>> 536f6da (transfer?)
 application.add_handler(CommandHandler("bad_command", bad_command))
 
 # on noncommand i.e message - echo the message on Telegram
