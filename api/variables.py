@@ -1,47 +1,45 @@
-from telegram import __version__ as TG_VER
+from pyrogram import Client
+from api.imports import *
 
-try:
-    from telegram import __version_info__
-except ImportError:
-    __version_info__ = (0, 0, 0, 0, 0)  # type: ignore[assignment]
-    
-if __version_info__ < (20, 0, 0, "alpha", 1):
-    raise RuntimeError(
-        f"not compatible with your current PTB version {TG_VER}."
-    )
-from telegram import (
-    Update,
-    ReplyKeyboardMarkup,
-    ReplyKeyboardRemove,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    InputTextMessageContent,
-    InlineQueryResultArticle,
-    helpers
-    )
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
 
-from telegram.constants import ParseMode
-from telegram.ext import (
-    Application,
-    ContextTypes,
-    CommandHandler,
-    MessageHandler,
-    PicklePersistence,
-    InlineQueryHandler,
-    ConversationHandler,
-    CallbackQueryHandler,
-    filters
-    )
+logger = logging.getLogger(__name__)
 
-from telegram.helpers import escape_markdown
+api_id = 314504
+api_hash = "8c64c308e6f0186d495ae1e92a1c228d"
 
-from telegram.error import (
-    TelegramError,
-    BadRequest
-    )
+decr8 = -1001280481543
+decr8_v2 = -1001969042072
+decr8loader = 1575933473
+me = 487795386
+p = re.compile("[a-z]+", re.IGNORECASE)
+dcr8_url = "https://t.me/crateofnotsodasbutmusic/"
+dcr8_v2_url = "https://t.me/thecrate/"
 
-from uuid import uuid4
-from html import escape
-from io import BytesIO
+# deep-linking parameters.
+DECR8 = 'decr8'
+USING_ENTITIES = 'using-entities-here'
+SO_COOL = 'so-cool'
 
-import random, os, re, json, traceback, logging, librosa, time
+DEVELOPER_CHAT_ID = 'me'
+
+STAGE1, STAGE2, STAGE3, STAGE4 = range(4)
+
+app = Client("decr8_g-host", api_id=api_id, api_hash=api_hash)
+
+application = Application.builder().token(
+    "6019764680:AAHHW7sDL6I441HW3ineaJ3PM73tXwUlfLU"
+).build()
+
+def process_data(file_path, logger):
+    with open(file_path, "r+", encoding="utf-8") as f:
+        logger.info("Unpacking data to dict.")
+        d = json.load(f)
+        sorted(d)
+    return d
+
+# Call the function and assign the result to a variable
+data = process_data("/home/decr8/decr8/res/decr8_data.json", logger)
+data_v2 = process_data("/home/decr8/decr8/res/decr8_data_v2.json", logger)
