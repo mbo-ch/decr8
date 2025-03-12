@@ -1,4 +1,3 @@
-# musicloud
-lol
+# decr8
 
-u dont need any info.
+cp /home/decr8/decr8/decr8.service /home/etc/systemd/system/
