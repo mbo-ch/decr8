@@ -1,10 +1,13 @@
 [Unit]
-Description=decr8_bot 
+Description=decr8_bot
 
 [Service]
 User=decr8
 WorkingDirectory=/home/decr8/decr8
-ExecStart=python3 /home/decr8/decr8/decr8_bot.py
+# Use Python from the venv
+ExecStart=/home/decr8/.venvs/decr8/bin/python /home/decr8/decr8/decr8_bot.py
+# Ensure the venv's PATH is used
+Environment="PATH=/home/decr8/.venvs/decr8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
 Restart=always
 
 [Install]
