@@ -21,4 +21,4 @@ application.add_handler(
     )
 )
 
-application.add_handler(CallbackQueryHandler(search_buttons))
+# application.add_handler(CallbackQueryHandler(search_buttons))
