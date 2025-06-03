@@ -5,10 +5,8 @@ import os, sys, json
 from uuid import uuid4
 
 from api.variables import *
-from api.deep_link import *
-from api.bot_commands import *
-from api.bot_non_commands import *
-from api.bot_error import *
+from api.bot_command import *
+from api.bot_query import *
 
 #from telegram.utils import (
 #    helpers

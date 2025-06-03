@@ -6,7 +6,6 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-
 api_id = 314504
 api_hash = "8c64c308e6f0186d495ae1e92a1c228d"
 
@@ -17,16 +16,6 @@ me = 487795386
 p = re.compile("[a-z]+", re.IGNORECASE)
 dcr8_url = "https://t.me/crateofnotsodasbutmusic/"
 dcr8_v2_url = "https://t.me/thecrate/"
-
-# deep-linking parameters.
-DECR8 = 'decr8'
-USING_ENTITIES = 'using-entities-here'
-SO_COOL = 'so-cool'
-
-DEVELOPER_CHAT_ID = 'me'
-
-STAGE1, STAGE2, STAGE3, STAGE4 = range(4)
-
 app = Client("decr8_g-host", api_id=api_id, api_hash=api_hash)
 
 application = Application.builder().token(

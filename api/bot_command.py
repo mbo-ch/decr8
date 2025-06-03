@@ -1,9 +1,7 @@
 from api.imports import *
 from api.variables import *
-from api.bot_error import *
 
 COUNT = 0
-DELAY = 15
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Start bot"""
 
@@ -14,18 +12,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     reply_keyboard = [
         ["/start"],
         ["/queue", "/queue_mix", "/queue_v2"],
-        ["/tempo"]
+        ["/help"]
     ]
     
-    """Send a deep-linked URL when the command /start is issued."""
     bot = context.bot
-    user = update.effective_user    
-    url = helpers.create_deep_linked_url(
-        bot.username,
-        DECR8,
-        group=True
-        )
-    
+    user = update.effective_user        
     text = ("👺" "{} items found".format(len(data)))
 
     await update.message.reply_html(
@@ -54,16 +45,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
     link = re.search(r"(t\.me\/[a-zA-Z0-9_]{5,32})", update.message.text)
 
-    return STAGE1
-
 async def add(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     global COUNT
     
     reply_keyboard = [
         ["/sub", "/add"],
-        ["/queue", "/queue_v2"],
-        ["/queue_mix"]
+        ["/queue", "/queue_mix", "/queue_v2"],
+        ["/help"]
     ]
 
     COUNT += 1
@@ -80,13 +69,9 @@ async def sub(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     reply_keyboard = [
         ["/sub", "/add"],
-        ["/queue", "/queue_v2"],
-        ["/queue_mix"]
+        ["/queue", "/queue_mix", "/queue_v2"],
+        ["/help"]
     ]
-    help_keyboard = [
-        ["/add"]
-    ]
-
     if COUNT < 1:
         await update.message.reply_text(
             "queue cant be < {}. /add instead".format(COUNT),
@@ -212,79 +197,9 @@ async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         except (AttributeError, BadRequest) as e:
             continue
         
-async def slow(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    global DELAY
-    reply_keyboard = [
-        ["/slow", "/fast"],
-        ["/start"]
-    ]
-    if DELAY < 5:
-        await update.message.reply_text(
-            "delay cant be < {}. /fast instead".format(DELAY),
-            reply_markup=ReplyKeyboardMarkup(reply_keyboard),
-            parse_mode=ParseMode.MARKDOWN
-        )
-    else:
-        DELAY -= 5
-        
-        await update.message.reply_text(
-            "{}({})".format(DELAY, "-5"),
-            parse_mode=ParseMode.MARKDOWN,
-            reply_markup=ReplyKeyboardMarkup(
-                reply_keyboard,
-                one_time_keyboard=True
-            )
-        )
-        
-async def fast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    
-    global DELAY
-    # Define the reply keyboard layout
-    reply_keyboard = [
-        ["/slow", "/fast"],
-        ["/start"]
-    ]
-    DELAY +=5
+async def help_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """usaindizi"""
     await update.message.reply_text(
-        "{}({})".format(DELAY, "+5"),
-        parse_mode=ParseMode.MARKDOWN,
-        reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard,
-            one_time_keyboard=True
-        )
+        "/start",
+        parse_mode=ParseMode.MARKDOWN
     )
-    
-async def tempo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Send a message when the command /help is issued."""
-    global DELAY
-    reply_keyboard = [
-        ["/slow", "/fast"],
-        ["/start"]
-    ]
-    # Get all available message IDs
-    msg_id = [k for k in data.keys()]
-    while True:
-        random.shuffle(msg_id)
-        # Iterate over the shuffled list
-        for i in msg_id:
-            url = f"https://t.me/crateofnotsodasbutmusic/{i}"
-            try:
-                await update.message.reply_audio(
-                    "{}".format(url),
-                    parse_mode=ParseMode.MARKDOWN,
-                    reply_markup=ReplyKeyboardMarkup(
-                        reply_keyboard,
-                        one_time_keyboard=True,
-                        input_field_placeholder="▄︻デ══━一💥"
-                    )
-                )
-                if update.message.text == "/slow":
-                    time.sleep(DELAY)
-                elif update.message.text == "/stop":
-                    break
-            except (AttributeError, BadRequest) as e:
-                await update.message.reply_text(
-                    "[{}]({})".format("  🃜🃚🃖🃁🂭🂺  ", url),
-                    parse_mode=ParseMode.MARKDOWN,
-                )
-                time.sleep(DELAY)

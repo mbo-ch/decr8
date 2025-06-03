@@ -1,6 +1,5 @@
 from api.imports import *
 from api.variables import *
-from api.bot_error import *
 
 async def search(
         update: Update,
@@ -103,15 +102,13 @@ async def search(
                 "Not found.\n\n{}".format(e)
             )        
         
-    return msg_id, msg_id_v2,  performer, title, filename, enum_link_list
-
+    return msg_id, msg_id_v2,  performer, title, filename
 async def search_buttons(
         update: Update,
         context: ContextTypes.DEFAULT_TYPE
 ) -> None:
 
-    global filename, msg_id, msg_id_v2, link_list, page_number, page_size, start_index, end_index
-    
+    global filename, msg_id, msg_id_v2    
     query = update.callback_query
     
     # CallbackQueries need to be answered, even if no notification to the user is needed
@@ -184,12 +181,3 @@ async def inlinequery(
             )        
     await update.inline_query.answer(results, auto_pagination=True)
 
-async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Cancels and ends the conversation."""
-    user = update.message.from_user
-    logger.info("User %s canceled the conversation.", user.first_name)
-    await update.message.reply_text(
-        "Bye!", reply_markup=ReplyKeyboardRemove()
-    )
-
-    return ConversationHandler.END
