@@ -61,10 +61,7 @@ async def search_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     await send_page(query)
     
-async def inlinequery(
-        update: Update,
-        context: ContextTypes.DEFAULT_TYPE
-) -> None:
+async def inlinequery(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle the inline query."""
     query = update.inline_query.query
     results = []
