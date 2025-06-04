@@ -1,0 +1,20 @@
+import sqlite3
+
+conn = sqlite3.connect("/home/decr8/decr8/songs.db")
+cur = conn.cursor()
+cur.execute("""
+CREATE TABLE IF NOT EXISTS songs (
+    channel TEXT,
+    msg_id INTEGER,
+    performer TEXT,
+    filename TEXT,
+    duration INTEGER,
+    date TEXT,
+    title TEXT,
+    is_album INTEGER DEFAULT 0,        -- 0 = normal, 1 = part of album/grouped media
+    media_group_id TEXT DEFAULT NULL,  -- stores group/album ID if present
+    PRIMARY KEY (channel, msg_id)
+)
+""")
+conn.commit()
+conn.close()

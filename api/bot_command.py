@@ -1,23 +1,25 @@
 from api.imports import *
 from api.variables import *
+from api.utils import *
 
-COUNT = 0
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Start bot"""
-
-    global COUNT
-    
-    COUNT = +1
     
     reply_keyboard = [
         ["/start"],
-        ["/queue", "/queue_mix", "/queue_v2"],
-        ["/help"]
+        ["/queue", "/queue_mix"],
+        ["/pick_channel"]
     ]
-    
+
     bot = context.bot
-    user = update.effective_user        
-    text = ("👺" "{} items found".format(len(data)))
+    user = update.effective_user
+    channel = context.user_data.get("channel")
+    count = get_song_count(channel)
+    channels = get_available_channels()
+    if count == 0 and channel is None:
+        text = f"👺 /pick_channel"
+    else:
+        text = f"👺 {count} items found in {channel}"        
 
     await update.message.reply_html(
         rf"ִֶָ𓂃 ࣪˖ ִֶָ🐇་༘࿐ {user.mention_html()}! {text}.",
@@ -28,178 +30,90 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         ),
     )
     
+async def pick_channel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    channels = get_available_channels()
     keyboard = [
-        [
-            InlineKeyboardButton(
-                "<",
-                callback_data="1"
-            ),
-            
-            InlineKeyboardButton(
-                ">",
-                callback_data="2"
-            ),
-        ]
+        [InlineKeyboardButton(channel, callback_data=f"set_channel:{channel}")]
+        for channel in channels
     ]
-    
     reply_markup = InlineKeyboardMarkup(keyboard)
-    link = re.search(r"(t\.me\/[a-zA-Z0-9_]{5,32})", update.message.text)
-
-async def add(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-
-    global COUNT
-    
-    reply_keyboard = [
-        ["/sub", "/add"],
-        ["/queue", "/queue_mix", "/queue_v2"],
-        ["/help"]
-    ]
-
-    COUNT += 1
-
     await update.message.reply_text(
-        "queue {} song(s)".format(COUNT),
-        reply_markup=ReplyKeyboardMarkup(reply_keyboard),
-        parse_mode=ParseMode.MARKDOWN
+        "Pick a channel:",
+        reply_markup=reply_markup
     )
-
-async def sub(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-
-    global COUNT
-
-    reply_keyboard = [
-        ["/sub", "/add"],
-        ["/queue", "/queue_mix", "/queue_v2"],
-        ["/help"]
-    ]
-    if COUNT < 1:
-        await update.message.reply_text(
-            "queue cant be < {}. /add instead".format(COUNT),
-            reply_markup=ReplyKeyboardMarkup(help_keyboard),
-            parse_mode=ParseMode.MARKDOWN
-        )
-    else:
-        COUNT -= 1
-        await update.message.reply_text(
-            "queue {} song(s)\nuse /add for more".format(COUNT),
-            reply_markup=ReplyKeyboardMarkup(reply_keyboard),
-            parse_mode=ParseMode.MARKDOWN
-        )
-
+    
 async def queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /next is issued."""
+    channel = context.user_data.get("channel")
+    songs = get_random_song_list(channel=channel, count=10)
+    if not songs:
+        await update.message.reply_text("No songs found.")
+        return
 
-    global COUNT
+    keyboard = []
+    for song in songs:
+        # Unpack with new columns (add is_album & media_group_id)
+        channel, msg_id, performer, filename, duration, date, title, is_album, media_group_id = song
+        # Mark album songs with an icon
+        album_marker = "📀 " if is_album else ""
+        label = f"{album_marker}{title} - {performer}" if performer else f"{album_marker}{title}"
+        # Use channel and msg_id as unique identifier for callback
+        callback_data = f"send_song_{channel}_{msg_id}"
+        keyboard.append([InlineKeyboardButton(label, callback_data=callback_data)])
 
-    # Get all available message IDs, excluding known bad IDs
-    msg_id = [k for k in data.keys()]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text("Random Songs from {}:".format(channel), reply_markup=reply_markup)
 
-    # Shuffle the list of message IDs
-    random.shuffle(msg_id)
 
-    # Iterate over the shuffled list
-    for i in range(min(COUNT, len(msg_id))):
-        url = f"https://t.me/crateofnotsodasbutmusic/{msg_id[i]}"
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    query = update.callback_query
+    data = query.data
+    current = context.user_data.get("channel")
+    context.user_data["channel"] = "inactive" if current == "main" else "main"
+
+    if data.startswith("send_song_"):
+        _, _, channel, msg_id = data.split("_", 3)
+        msg_id = int(msg_id)
+
+        song = get_song_by_channel_and_msg_id(channel, msg_id)
+        if song:
+            channel, msg_id, performer, filename, duration, date, title, is_album, media_group_id = song
+            url = f"https://t.me/thecrate/{msg_id}" if channel == "main" else f"https://t.me/crateofnotsodasbutmusic/{msg_id}"
+            try:
+                await query.message.reply_audio(url)
+            except (AttributeError, BadRequest) as e:
+                await query.message.reply_text(
+                    "[{}]({})".format("  🃜🃚🃖🃁🂭🂺  ", url),
+                    parse_mode=ParseMode.MARKDOWN,
+                )
+        elif data == "set_channel":
+            # Toggle the channel
+            channel = data.split(":", 1)[1]
+            context.user_data["channel"] = channel
+            await query.answer(f"Channel set to {channel}!")
+            await query.edit_message_text(f"✅ Channel switched to: <b>{channel}</b>", parse_mode="HTML")
+        else:
+            await query.answer()
         
-        reply_keyboard = [
-            ["/sub", "/add"],
-            ["/queue", "/queue_mix", "/queue_v2"],
-            ["/start"]
-        ]
-        try:
-            await update.message.reply_audio(
-                "{}".format(url),
-                parse_mode=ParseMode.MARKDOWN,
-                reply_markup=ReplyKeyboardMarkup(
-                    reply_keyboard,
-                    one_time_keyboard=True,
-                    input_field_placeholder="▄︻デ══━一💥"
-                )
-            )
-        except (AttributeError, BadRequest) as e:
-            await update.message.reply_text(
-                "[{}]({})".format("  🃜🃚🃖🃁🂭🂺  ", url),
-                parse_mode=ParseMode.MARKDOWN,
-            )
-
-async def queue_v2(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Send a message when the command /next is issued."""
-
-    global COUNT
-         
-    # Get all available message IDs, excluding known bad IDs
-    msg_id = [k for k in data_v2.keys()]
-
-    # Shuffle the list of message IDs
-    random.shuffle(msg_id)
-
-    # Iterate over the shuffled list
-    for i in range(min(COUNT, len(msg_id))):
-        url = f"https://t.me/thecrate/{msg_id[i]}"
-        print(url)
-        reply_keyboard = [
-            ["/sub", "/add"],
-            ["/queue", "/queue_mix", "/queue_v2"],
-            ["/start"]
-        ]
-        try:
-            await update.message.reply_audio(
-                "{}".format(url),
-                parse_mode=ParseMode.MARKDOWN,
-                reply_markup=ReplyKeyboardMarkup(
-                    reply_keyboard,
-                    one_time_keyboard=True
-                )
-            )
-            print(url)
-        except (AttributeError, BadRequest) as e:
-            await update.message.reply_text(
-                "[{}]({})".format("  🃜🃚🃖🃁🂭🂺  ", url),
-                parse_mode=ParseMode.MARKDOWN,
-            )
-
 async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /next is issued."""
-    
-    global COUNT
-        
-    msg_id = []
+    channel = context.user_data.get("channel")  
+    songs = get_long_songs(channel, count=10)
+    if not songs:
+        await update.message.reply_text("No songs 10 minutes or longer found!")
+        return
 
-    for k, v in data.items():
-        if v.get("duration") > 600 and v.get("duration") < 18000:
-            msg_id.append(k)
+    keyboard = []
+    for s in songs:
+        mins, secs = divmod(s[4], 60)
+        time_str = f"{mins}:{secs:02d}"
+        album_icon = "💿 " if s[7] else ""  # <--- assumes s[7] == is_album
+        button_text = f"{album_icon}{s[6]} — {time_str}"
+        callback_data = f"send_song_{s[0]}_{s[1]}"
+        keyboard.append([InlineKeyboardButton(button_text, callback_data=callback_data)])
 
-    # Shuffle the list of message IDs
-    random.shuffle(msg_id)
-    reply_keyboard = [
-        ["/sub", "/add"],
-        ["/queue", "/queue_mix", "/queue_v2"],
-        ["/start"]
-    ]
-    
-    # Define your URLs
-    urls = [
-        f"https://t.me/crateofnotsodasbutmusic/{msg_id[i]}" for i in range(min(COUNT, len(msg_id)))
-    ] + ["https://t.me/thecrate"]
-    
-    # Iterate over the URLs and send an audio message for each one
-    for url in urls:
-        try:
-            await update.message.reply_audio(
-                "{}".format(url),
-                parse_mode=ParseMode.MARKDOWN,
-                reply_markup=ReplyKeyboardMarkup(
-                    reply_keyboard,
-                    one_time_keyboard=True,
-                    input_field_placeholder="▀▄▀▄▀▄"
-                )
-            )
-        except (AttributeError, BadRequest) as e:
-            continue
-        
-async def help_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """usaindizi"""
+    reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
-        "/start",
-        parse_mode=ParseMode.MARKDOWN
+        "Select a song (10 min+):",
+        reply_markup=reply_markup
     )

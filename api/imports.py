@@ -16,6 +16,7 @@ from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     InputTextMessageContent,
+    InputMediaAudio,
     InlineQueryResultArticle,
     helpers
     )
@@ -44,4 +45,4 @@ from uuid import uuid4
 from html import escape
 from io import BytesIO
 
-import random, os, re, json, traceback, logging, time
+import random, os, re, json, traceback, logging, time, sqlite3

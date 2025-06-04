@@ -1,5 +1,6 @@
 from api.imports import *
 from api.variables import *
+from api.utils import *
 
 # Globals for paging
 search_results = []
@@ -11,7 +12,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     global search_results, page_number, page_size
 
     query_text = update.message.text
-    search_results = [v.get('filename') for v in data.values() if re.search(query_text, v.get('filename', ''), re.IGNORECASE)]
+    search_results = search_filenames(query_text)
 
     page_number = 1  # Reset to first page
 
@@ -19,7 +20,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await send_page(update)
     else:
         await update.message.reply_text("Status: not found")
-
+        
 async def send_page(update_or_query):
     """Helper to send current page of results."""
     global search_results, page_number, page_size
@@ -54,9 +55,9 @@ async def search_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     query = update.callback_query
     await query.answer(text="🤖")    
 
-    if query.data == "prev" and page_number > 1:
+    if query.data == "<" and page_number > 1:
         page_number -= 1
-    elif query.data == "next":
+    elif query.data == ">":
         page_number += 1
 
     await send_page(query)
@@ -65,15 +66,15 @@ async def inlinequery(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     """Handle the inline query."""
     query = update.inline_query.query
     results = []
+    channel = context.user_data.get("channel")  # Optional: filter per channel
 
-    for k, v in data.items():
-        if re.search(query, v.get("filename"), re.IGNORECASE):
-            results.append(
-                InlineQueryResultAudio(
-                    id=uuid4(),
-                    audio_url="{}{}".format(dcr8_url, k),
-                    title="{}".format(v.get("title"))
-                ),
-            )        
+    # Reuse your existing search helper
+    for msg_id, filename, title in search_filenames(query):
+        results.append(
+            InlineQueryResultAudio(
+                id=str(uuid4()),
+                audio_url=f"{dcr8_url}{msg_id}",
+                title=title or filename
+            )
+        )
     await update.inline_query.answer(results, auto_pagination=True)
-

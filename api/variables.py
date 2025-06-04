@@ -17,18 +17,7 @@ p = re.compile("[a-z]+", re.IGNORECASE)
 dcr8_url = "https://t.me/crateofnotsodasbutmusic/"
 dcr8_v2_url = "https://t.me/thecrate/"
 app = Client("decr8_g-host", api_id=api_id, api_hash=api_hash)
-
+DB_PATH = "/home/decr8/decr8/decr8.db"
 application = Application.builder().token(
     "6019764680:AAHHW7sDL6I441HW3ineaJ3PM73tXwUlfLU"
 ).build()
-
-def process_data(file_path, logger):
-    with open(file_path, "r+", encoding="utf-8") as f:
-        logger.info("Unpacking data to dict.")
-        d = json.load(f)
-        sorted(d)
-    return d
-
-# Call the function and assign the result to a variable
-data = process_data("/home/decr8/decr8/res/decr8_data.json", logger)
-data_v2 = process_data("/home/decr8/decr8/res/decr8_data_v2.json", logger)
