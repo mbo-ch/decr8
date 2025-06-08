@@ -54,6 +54,7 @@ async def queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     for song in songs:
         # Unpack with new columns (add is_album & media_group_id)
         channel, msg_id, performer, filename, duration, date, title, is_album, media_group_id = song
+        if not title: title = filename
         # Mark album songs with an icon
         album_marker = "📀 " if is_album else ""
         label = f"{album_marker}{title} - {performer}" if performer else f"{album_marker}{title}"
@@ -64,43 +65,45 @@ async def queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text("Random Songs from {}:".format(channel), reply_markup=reply_markup)
 
-
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     data = query.data
-    current = context.user_data.get("channel")
-    context.user_data["channel"] = "inactive" if current == "main" else "main"
 
     if data.startswith("send_song_"):
         _, _, channel, msg_id = data.split("_", 3)
         msg_id = int(msg_id)
-
         song = get_song_by_channel_and_msg_id(channel, msg_id)
         if song:
             channel, msg_id, performer, filename, duration, date, title, is_album, media_group_id = song
-            url = f"https://t.me/thecrate/{msg_id}" if channel == "main" else f"https://t.me/crateofnotsodasbutmusic/{msg_id}"
+            url = (
+                f"https://t.me/thecrate/{msg_id}"
+                if channel == "main"
+                else f"https://t.me/crateofnotsodasbutmusic/{msg_id}"
+            )
             try:
                 await query.message.reply_audio(url)
-            except (AttributeError, BadRequest) as e:
+            except (AttributeError, BadRequest):
                 await query.message.reply_text(
-                    "[{}]({})".format("  🃜🃚🃖🃁🂭🂺  ", url),
+                    f"[  🃜🃚🃖🃁🂭🂺  ]({url})",
                     parse_mode=ParseMode.MARKDOWN,
                 )
-        elif data == "set_channel":
-            # Toggle the channel
-            channel = data.split(":", 1)[1]
-            context.user_data["channel"] = channel
-            await query.answer(f"Channel set to {channel}!")
-            await query.edit_message_text(f"✅ Channel switched to: <b>{channel}</b>", parse_mode="HTML")
-        else:
-            await query.answer()
+        await query.answer()
+    elif data.startswith("set_channel:"):
+        channel = data.split(":", 1)[1]
+        context.user_data["channel"] = channel
+        await query.answer(f"Channel set to {channel}!")
+        await query.edit_message_text(
+            f"✅ Channel switched to: <b>{channel}</b>", parse_mode="HTML"
+        )
+    else:
+        await query.answer()
         
 async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /next is issued."""
     channel = context.user_data.get("channel")  
     songs = get_long_songs(channel, count=10)
     if not songs:
-        await update.message.reply_text("No songs 10 minutes or longer found!")
+        await update.message.reply_text("No songs 10 minutes or longer found! in {}".format(channel))
         return
 
     keyboard = []
@@ -114,6 +117,6 @@ async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
-        "Select a song (10 min+):",
+        "Select a song (10 min+) from {}:".format(channel),
         reply_markup=reply_markup
     )

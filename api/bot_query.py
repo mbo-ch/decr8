@@ -47,20 +47,6 @@ async def send_page(update_or_query):
         await update_or_query.edit_message_text(text, reply_markup=reply_markup)
     else:
         await update_or_query.message.reply_text(text, reply_markup=reply_markup)
-
-async def search_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Handles pagination for search results."""
-    global page_number
-
-    query = update.callback_query
-    await query.answer(text="🤖")    
-
-    if query.data == "<" and page_number > 1:
-        page_number -= 1
-    elif query.data == ">":
-        page_number += 1
-
-    await send_page(query)
     
 async def inlinequery(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle the inline query."""
@@ -69,7 +55,7 @@ async def inlinequery(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     channel = context.user_data.get("channel")  # Optional: filter per channel
 
     # Reuse your existing search helper
-    for msg_id, filename, title in search_filenames(query):
+    for msg_id, filename, title, *_ in search_filenames(update.message.text):
         results.append(
             InlineQueryResultAudio(
                 id=str(uuid4()),

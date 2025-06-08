@@ -3,7 +3,7 @@ from api.variables import *
 from api.bot_command import *
 from api.bot_query import *
 
-# on different commands - answer in Telegram
+# on command - answer in Telegram
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CommandHandler("queue", queue))
 application.add_handler(CommandHandler("queue_mix", queue_mix))
