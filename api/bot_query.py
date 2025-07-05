@@ -47,7 +47,7 @@ async def send_page(update_or_query):
         await update_or_query.edit_message_text(text, reply_markup=reply_markup)
     else:
         await update_or_query.message.reply_text(text, reply_markup=reply_markup)
-    
+        
 async def inlinequery(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle the inline query."""
     query = update.inline_query.query
@@ -63,4 +63,5 @@ async def inlinequery(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
                 title=title or filename
             )
         )
-    await update.inline_query.answer(results, auto_pagination=True)
+        await update.inline_query.answer(results, auto_pagination=True)
+        

@@ -17,7 +17,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     count = get_song_count(channel)
     channels = get_available_channels()
     if count == 0 and channel is None:
-        text = f"👺 /pick_channel"
+        text = f"👺 No channel selected. Please /pick_channel"
     else:
         text = f"👺 {count} items found in {channel}"        
 
@@ -52,22 +52,50 @@ async def queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     keyboard = []
     for song in songs:
-        # Unpack with new columns (add is_album & media_group_id)
         channel, msg_id, performer, filename, duration, date, title, is_album, media_group_id = song
-        if not title: title = filename
-        # Mark album songs with an icon
+        if not title:
+            title = filename
+        mins, secs = divmod(duration, 60)
+        time_str = f"{mins}:{secs:02d}"
         album_marker = "📀 " if is_album else ""
-        label = f"{album_marker}{title} - {performer}" if performer else f"{album_marker}{title}"
-        # Use channel and msg_id as unique identifier for callback
+        # Add duration at the end of the label
+        if performer:
+            label = f"{album_marker}{title} - {performer} — {time_str}"
+        else:
+            label = f"{album_marker}{title} — {time_str}"
         callback_data = f"send_song_{channel}_{msg_id}"
         keyboard.append([InlineKeyboardButton(label, callback_data=callback_data)])
+    keyboard.append([InlineKeyboardButton("🔄 Refresh", callback_data="refresh_queue")])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("Random Songs from {}:".format(channel), reply_markup=reply_markup)
 
+    if context.user_data.get("START_OVER"):
+        await update.callback_query.answer()
+        await update.callback_query.edit_message_text(
+            text="Random Songs from {}:".format(channel),
+            reply_markup=reply_markup
+        )
+    else:
+        await update.message.reply_text(
+            "Random Songs from {}:".format(channel),
+            reply_markup=reply_markup
+        )
+
+    context.user_data["START_OVER"] = False
+    
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     data = query.data
+
+    if data == "refresh_queue":
+        context.user_data["START_OVER"] = True
+        await queue(update, context)
+        return
+    
+    if data == "refresh_queue_mix":
+        context.user_data["START_OVER"] = True
+        await queue(update, context)
+        return
 
     if data.startswith("send_song_"):
         _, _, channel, msg_id = data.split("_", 3)
@@ -110,13 +138,33 @@ async def queue_mix(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     for s in songs:
         mins, secs = divmod(s[4], 60)
         time_str = f"{mins}:{secs:02d}"
-        album_icon = "💿 " if s[7] else ""  # <--- assumes s[7] == is_album
-        button_text = f"{album_icon}{s[6]} — {time_str}"
+        album_icon = "💿 " if s[7] else ""
+        title = s[6]
+        if not title:
+            title = s[3]
+        button_text = f"{album_icon}{title} — {time_str}"
         callback_data = f"send_song_{s[0]}_{s[1]}"
         keyboard.append([InlineKeyboardButton(button_text, callback_data=callback_data)])
+    keyboard.append([InlineKeyboardButton("🔄 Refresh", callback_data="refresh_queue_mix")])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
-        "Select a song (10 min+) from {}:".format(channel),
-        reply_markup=reply_markup
-    )
+
+    if context.user_data.get("START_OVER"):
+        await update.callback_query.answer()
+        await update.callback_query.edit_message_text(
+            "Select a song from {}:".format(channel),
+            reply_markup=reply_markup
+        )
+
+        await update.callback_query.edit_message_text(
+            text="Random Songs from {}:".format(channel),
+            reply_markup=reply_markup
+        )
+    else:
+        await update.message.reply_text(
+            "Random Songs from {}:".format(channel),
+            reply_markup=reply_markup
+        )
+
+    context.user_data["START_OVER"] = False
+    
