@@ -94,7 +94,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     
     if data == "refresh_queue_mix":
         context.user_data["START_OVER"] = True
-        await queue(update, context)
+        await queue_mix(update, context)
         return
 
     if data.startswith("send_song_"):
