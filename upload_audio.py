@@ -2,8 +2,8 @@ from pyrogram import Client
 from api.variables import decr8
 import os
 
-api_id = 314504
-api_hash = "8c64c308e6f0186d495ae1e92a1c228d"
+api_id = 123456
+api_hash = "api_hash"
 
 folder_path = "/home/decr8/music"
 
