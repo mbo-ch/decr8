@@ -1,7 +1,7 @@
 from pyrogram import Client
 
-api_id = 314504
-api_hash = "8c64c308e6f0186d495ae1e92a1c228d"
+api_id = 123456
+api_hash = "api_hash"
 
 app = Client("decr8_g-host", api_id=api_id, api_hash=api_hash)
 
