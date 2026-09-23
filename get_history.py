@@ -6,8 +6,8 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-api_id = 314504
-api_hash = "8c64c308e6f0186d495ae1e92a1c228d"
+api_id = 123456
+api_hash = "api_hash"
 
 decr8 = -1001280481543
 decr8_v2 = -1001969042072
