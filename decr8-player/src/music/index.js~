@@ -1,4 +1,0 @@
-const req = require.context('.', true, /\.js$/)
-req.keys().forEach((filename) => req(filename))
-
-export { default as audioFiles } from './music';

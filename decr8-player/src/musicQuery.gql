@@ -1,9 +1,0 @@
-query MusicQuery {
-  allFile(filter: { sourceInstanceName: { eq: "music" } }) {
-    edges {
-      node {
-        name
-      }
-    }
-  }
-}

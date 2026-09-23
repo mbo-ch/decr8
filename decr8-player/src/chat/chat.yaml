@@ -1,6 +1,0 @@
-title: YAML content used at build time with Gatsby
-content:
-  - item: 192.33
-  - item: 111111
-  - item: "hello"
-  - item: "world"
